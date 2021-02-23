@@ -127,8 +127,8 @@ do
     echo "Domain Name Static Website is valid ...........: $USER_INPUT"
     AWS_DOMAIN_NAME=$USER_INPUT
     # S3 Bucket Document Store for this project
-    S3_DOMAIN_URL_BUCKET="s3://${AWS_DOMAIN_NAME}"
-    S3_WEBSITE_BUCKET="s3://www.${AWS_DOMAIN_NAME}"
+    S3_ROOTDOMAIN_BUCKET="s3://${AWS_DOMAIN_NAME}"
+    S3_REDIRECT_BUCKET="s3://www.${AWS_DOMAIN_NAME}"
     S3_WEBSITE_LOGS_BUCKET="s3://logs.${AWS_DOMAIN_NAME}"
     break
   else
@@ -285,7 +285,7 @@ STACK_ID=$(aws cloudformation create-stack --stack-name "$STACK_NAME" --paramete
 #-----------------------------
 if [[ $? -eq 0 ]]; then
   # Wait for stack creation to complete
-  echo "Cloudformation Stack Creation Process Wait.....: $BUILD_COUNTER"
+  echo "Cloudformation Stack Creation Process Wait.....: $STACK_ID"
   CREATE_STACK_STATUS=$(aws cloudformation describe-stacks --stack-name "$STACK_ID" --query 'Stacks[0].StackStatus' --output text --profile "$AWS_PROFILE" --region "$AWS_REGION")
   while [[ $CREATE_STACK_STATUS == "REVIEW_IN_PROGRESS" ]] || [[ $CREATE_STACK_STATUS == "CREATE_IN_PROGRESS" ]]
   do
@@ -319,9 +319,9 @@ $(( TIME_DIFF_STACK / 3600 ))h $(( (TIME_DIFF_STACK / 60) % 60 ))m $(( TIME_DIFF
 #-----------------------------
 # Transfer HTML Docs to Website Bucket
 S3_LOCATION="$PROJECT_BUCKET/www/"
-if (aws s3 sync ${S3_LOCATION} ${S3_WEBSITE_BUCKET} --profile "$AWS_PROFILE" --region "$AWS_REGION" > /dev/null)
+if (aws s3 sync ${S3_LOCATION} ${S3_ROOTDOMAIN_BUCKET} --profile "$AWS_PROFILE" --region "$AWS_REGION" > /dev/null)
 then
-  echo "Transfered HTML Templates to Website Bucket ...: ${S3_WEBSITE_BUCKET}"
+  echo "Transfered HTML Templates to Website Bucket ...: ${S3_ROOTDOMAIN_BUCKET}"
 else
   echo "Error! Failed to Transfer HTML Templates ......: ${S3_LOCATION}"
   exit 1
@@ -753,7 +753,7 @@ aws cloudformation update-stack --stack-name "$STACK_ID" --parameters          \
 #-----------------------------
 if [[ $? -eq 0 ]]; then
   # Wait for stack creation to complete
-  echo "Cloudformation Stack Update Process Wait.......: $BUILD_COUNTER"
+  echo "Cloudformation Stack Update Process Wait.......: $STACK_ID"
   CREATE_STACK_STATUS=$(aws cloudformation describe-stacks --stack-name "$STACK_ID" --query 'Stacks[0].StackStatus' --output text --profile "$AWS_PROFILE" --region "$AWS_REGION")
   while [[ $CREATE_STACK_STATUS == "UPDATE_IN_PROGRESS" ]] || [[ $CREATE_STACK_STATUS == "CREATE_IN_PROGRESS" ]]
   do
@@ -860,7 +860,7 @@ aws cloudformation update-stack --stack-name "$STACK_ID" --parameters \
 #-----------------------------
 if [[ $? -eq 0 ]]; then
   # Wait for stack creation to complete
-  echo "Cloudformation Stack Update Process Wait.......: $BUILD_COUNTER"
+  echo "Cloudformation Stack Update Process Wait.......: $STACK_ID"
   CREATE_STACK_STATUS=$(aws cloudformation describe-stacks --stack-name "$STACK_ID" --query 'Stacks[0].StackStatus' --output text --profile "$AWS_PROFILE" --region "$AWS_REGION")
   while [[ $CREATE_STACK_STATUS == "UPDATE_IN_PROGRESS" ]] || [[ $CREATE_STACK_STATUS == "CREATE_IN_PROGRESS" ]]
   do

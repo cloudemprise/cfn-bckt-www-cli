@@ -131,8 +131,8 @@ Resources:
           !Ref ProjectName
         DomainBaseURL:
           !Ref DomainBaseURL
-        BucketWebsiteDNS:
-          !GetAtt BucketDefs.Outputs.BucketWebsiteDNS
+        BucketRootDomainDNS:
+          !GetAtt BucketDefs.Outputs.BucketRootDomainDNS
         BucketLogsDNS:
           !GetAtt BucketDefs.Outputs.BucketLogsDNS
       TimeoutInMinutes: 5

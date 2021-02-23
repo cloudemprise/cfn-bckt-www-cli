@@ -38,7 +38,7 @@ Parameters:
 
   # ------------------------------------------
   # --- S3 Website Bucket IPv4 DNS
-  BucketWebsiteDNS:
+  BucketRootDomainDNS:
     Description: "The IPv4 Website Bucket DNS."
     Type: String
 
@@ -131,7 +131,7 @@ Resources:
           - 
             Id: !Sub "${ProjectName}-${DomainBaseURL}-origin"
             # --- S3 Website Bucket IPv4 DNS
-            DomainName: !Ref BucketWebsiteDNS
+            DomainName: !Ref BucketRootDomainDNS
             # ---
             ConnectionAttempts: 3
             ConnectionTimeout: 10
@@ -153,7 +153,7 @@ Resources:
     # .............................
     Properties:
       # .............................
-      Bucket: !Sub "www.${DomainBaseURL}"
+      Bucket: !Sub "${DomainBaseURL}"
       PolicyDocument:
         Id: "PolicyForCloudFrontPrivateContent"
         Version: "2008-10-17"
@@ -161,7 +161,7 @@ Resources:
           - Effect: "Allow"
             Action:
               - "s3:GetObject"
-            Resource: !Sub "arn:aws:s3:::www.${DomainBaseURL}/*"
+            Resource: !Sub "arn:aws:s3:::${DomainBaseURL}/*"
             Principal:
               CanonicalUser:
                 !GetAtt CloudFrontOriginAccessIdentity.S3CanonicalUserId

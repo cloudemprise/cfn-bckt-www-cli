@@ -53,12 +53,12 @@ Resources:
 
   # ------------------------------------------
   # --- Root Bucket Definition
-  BucketWebsite:
+  BucketRootDomain:
     Type: AWS::S3::Bucket
     # .............................
     Properties:
       # .............................
-      BucketName: !Sub "www.${DomainBaseURL}"
+      BucketName: !Sub "${DomainBaseURL}"
       AccessControl: PublicRead
       # .............................
       WebsiteConfiguration: 
@@ -97,17 +97,17 @@ Resources:
 
   # ------------------------------------------
   # --- Redirect Bucket Definition
-  BucketBaseURL:
+  BucketWwwRedirect:
     Type: AWS::S3::Bucket
     # .............................
     Properties:
       # .............................
-      BucketName: !Ref DomainBaseURL
+      BucketName: !Sub "www.${DomainBaseURL}"
       AccessControl: BucketOwnerFullControl
       # .............................
       WebsiteConfiguration:
         RedirectAllRequestsTo:
-          HostName: !Ref BucketWebsite
+          HostName: !Sub "${DomainBaseURL}"
       # .............................
       Tags:
         -
@@ -120,14 +120,14 @@ Outputs:
 
   # ------------------------------------------
   # --- Website URL
-  BucketWebsiteURL:
+  BucketRootDomainURL:
     Description: "The URL of Static Website."
-    Value: !GetAtt BucketWebsite.WebsiteURL
+    Value: !GetAtt BucketRootDomain.WebsiteURL
   # ------------------------------------------
   # --- S3 Website Bucket IPv4 DNS
-  BucketWebsiteDNS:
+  BucketRootDomainDNS:
     Description: "The IPv4 Root Bucket DNS."
-    Value: !GetAtt BucketWebsite.DomainName
+    Value: !GetAtt BucketRootDomain.DomainName
   # ------------------------------------------
   # --- S3 Logs Bucket IPv4 DNS
   BucketLogsDNS:
