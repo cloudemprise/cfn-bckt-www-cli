@@ -124,12 +124,12 @@ Outputs:
     Description: "The URL of Static Website."
     Value: !GetAtt BucketWebsite.WebsiteURL
   # ------------------------------------------
-  # --- S3 Root Bucket IPv4 DNS
+  # --- S3 Website Bucket IPv4 DNS
   BucketWebsiteDNS:
     Description: "The IPv4 Root Bucket DNS."
     Value: !GetAtt BucketWebsite.DomainName
   # ------------------------------------------
-  # --- S3 Root Bucket IPv4 DNS
+  # --- S3 Logs Bucket IPv4 DNS
   BucketLogsDNS:
     Description: "The IPv4 Logs Bucket DNS."
     Value: !GetAtt BucketLogs.DomainName

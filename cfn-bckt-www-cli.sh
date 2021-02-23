@@ -261,7 +261,6 @@ find -L ./www -type f -name "*.html" ! -path "*/scratch/*" -print0 |
 
 
 
-
 #-----------------------------
 #-----------------------------
 # Stage1 Stack Creation Code Block
@@ -317,9 +316,8 @@ $(( TIME_DIFF_STACK / 3600 ))h $(( (TIME_DIFF_STACK / 60) % 60 ))m $(( TIME_DIFF
 #.............................
 
 
-
 #-----------------------------
-# Transfer Website Docs to Root Domain Bucket
+# Transfer HTML Docs to Website Bucket
 S3_LOCATION="$PROJECT_BUCKET/www/"
 if (aws s3 sync ${S3_LOCATION} ${S3_WEBSITE_BUCKET} --profile "$AWS_PROFILE" --region "$AWS_REGION" > /dev/null)
 then
