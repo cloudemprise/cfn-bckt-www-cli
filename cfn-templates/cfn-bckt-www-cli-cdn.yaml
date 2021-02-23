@@ -37,13 +37,13 @@ Parameters:
       ^(([a-zA-Z]{1})|([a-zA-Z]{1}[a-zA-Z]{1})|([a-zA-Z]{1}[0-9]{1})|([0-9]{1}[a-zA-Z]{1})|([a-zA-Z0-9][a-zA-Z0-9-_]{1,61}[a-zA-Z0-9]))\.([a-zA-Z]{2,6}|[a-zA-Z0-9-]{2,30}\.[a-zA-Z]{2,3})$
 
   # ------------------------------------------
-  # --- S3 Root Bucket IPv4 DNS
-  BucketRootDNS:
-    Description: "The IPv4 Root Bucket DNS."
+  # --- S3 Website Bucket IPv4 DNS
+  BucketWebsiteDNS:
+    Description: "The IPv4 Website Bucket DNS."
     Type: String
 
   # ------------------------------------------
-  # --- S3 Root Bucket IPv4 DNS
+  # --- S3 Logs Bucket IPv4 DNS
   BucketLogsDNS:
     Description: "The IPv4 Logs Bucket DNS."
     Type: String
@@ -82,7 +82,7 @@ Resources:
       # .............................
       Tags:
         -
-          Key: "Project"
+          Key: "Name"
           Value: !Sub "${ProjectName}"
       # .............................
       DistributionConfig:
@@ -130,8 +130,8 @@ Resources:
         Origins: 
           - 
             Id: !Sub "${ProjectName}-${DomainBaseURL}-origin"
-            # --- S3 Root Bucket IPv4 DNS
-            DomainName: !Ref BucketRootDNS
+            # --- S3 Website Bucket IPv4 DNS
+            DomainName: !Ref BucketWebsiteDNS
             # ---
             ConnectionAttempts: 3
             ConnectionTimeout: 10
@@ -153,7 +153,7 @@ Resources:
     # .............................
     Properties:
       # .............................
-      Bucket: !Ref DomainBaseURL
+      Bucket: !Sub "www.${DomainBaseURL}"
       PolicyDocument:
         Id: "PolicyForCloudFrontPrivateContent"
         Version: "2008-10-17"
@@ -161,7 +161,7 @@ Resources:
           - Effect: "Allow"
             Action:
               - "s3:GetObject"
-            Resource: !Sub "arn:aws:s3:::${DomainBaseURL}/*"
+            Resource: !Sub "arn:aws:s3:::www.${DomainBaseURL}/*"
             Principal:
               CanonicalUser:
                 !GetAtt CloudFrontOriginAccessIdentity.S3CanonicalUserId

@@ -58,6 +58,12 @@ Parameters:
       ^(([a-zA-Z]{1})|([a-zA-Z]{1}[a-zA-Z]{1})|([a-zA-Z]{1}[0-9]{1})|([0-9]{1}[a-zA-Z]{1})|([a-zA-Z0-9][a-zA-Z0-9-_]{1,61}[a-zA-Z0-9]))\.([a-zA-Z]{2,6}|[a-zA-Z0-9-]{2,30}\.[a-zA-Z]{2,3})$
 
   # ------------------------------------------
+  # --- The Domain Hosted Zone ID
+  DomainHostedZoneId:
+    Description: "An Amazon Route 53 hosted zone ID"
+    Type: AWS::Route53::HostedZone::Id
+
+  # ------------------------------------------
   # --- Script Build Step Counter
   BuildStep:
     Description: "Shell script step counter"
@@ -125,8 +131,8 @@ Resources:
           !Ref ProjectName
         DomainBaseURL:
           !Ref DomainBaseURL
-        BucketRootDNS:
-          !GetAtt BucketDefs.Outputs.BucketRootDNS
+        BucketWebsiteDNS:
+          !GetAtt BucketDefs.Outputs.BucketWebsiteDNS
         BucketLogsDNS:
           !GetAtt BucketDefs.Outputs.BucketLogsDNS
       TimeoutInMinutes: 5

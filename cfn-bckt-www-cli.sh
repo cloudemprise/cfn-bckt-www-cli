@@ -127,8 +127,8 @@ do
     echo "Domain Name Static Website is valid ...........: $USER_INPUT"
     AWS_DOMAIN_NAME=$USER_INPUT
     # S3 Bucket Document Store for this project
-    S3_WEBSITE_BUCKET="s3://${AWS_DOMAIN_NAME}"
-    S3_WEBSITE_WWW_BUCKET="s3://www.${AWS_DOMAIN_NAME}"
+    S3_DOMAIN_URL_BUCKET="s3://${AWS_DOMAIN_NAME}"
+    S3_WEBSITE_BUCKET="s3://www.${AWS_DOMAIN_NAME}"
     S3_WEBSITE_LOGS_BUCKET="s3://logs.${AWS_DOMAIN_NAME}"
     break
   else
@@ -137,12 +137,6 @@ do
 done
 #.............................
 
-
-
-
-#!! COMMENT Construct Begins Here:
-: <<'END'
-#!! COMMENT BEGIN
 
 #-----------------------------
 # Get Route 53 Domain hosted zone ID
@@ -153,12 +147,6 @@ HOSTED_ZONE_ID=$(aws route53 list-hosted-zones-by-name --dns-name "$AWS_DOMAIN_N
     && { echo "Invalid Hosted Zone!"; exit 1; } \
     || { echo "Route53 Hosted Zone ID ........................: $HOSTED_ZONE_ID"; }
 #.............................
-
-
-#!! COMMENT END
-END
-#!! COMMENT Construct Ends Here:
-
 
 
 #-----------------------------
@@ -182,7 +170,7 @@ echo "The Script Caller userid ......................: $AWS_USERID_CLI"
 
 #----------------------------------------------
 # Create S3 Bucket Policies from local templates
-find ./policies/s3-buckets/template-proj* -type f -print0 |
+find -L ./policies/s3-buckets/template-proj* -type f -print0 |
   while IFS= read -r -d '' TEMPLATE
   do
     if [[ ! -s "$TEMPLATE" ]]; then
@@ -238,7 +226,7 @@ find ./policies -type f -name "${PROJECT_NAME}*.json" ! -path "*/scratch/*" -pri
 
 #----------------------------------------------
 # Upload Cloudformation Templates to S3
-find ./cfn-templates -type f -name "*.yaml" ! -path "*/scratch/*" -print0 |
+find -L ./cfn-templates -type f -name "*.yaml" ! -path "*/scratch/*" -print0 |
   while IFS= read -r -d '' FILE
   do
     if [[ ! -s "$FILE" ]]; then
@@ -258,7 +246,7 @@ find ./cfn-templates -type f -name "*.yaml" ! -path "*/scratch/*" -print0 |
 
 #----------------------------------------------
 # Upload html files to S3
-find ./www -type f -name "*.html" ! -path "*/scratch/*" -print0 |
+find -L ./www -type f -name "*.html" ! -path "*/scratch/*" -print0 |
   while IFS= read -r -d '' FILE
   do
     if [[ ! -s "$FILE" ]]; then
@@ -289,6 +277,7 @@ TIME_START_STACK=$(date +%s)
 STACK_ID=$(aws cloudformation create-stack --stack-name "$STACK_NAME" --parameters          \
                 ParameterKey=ProjectName,ParameterValue="$PROJECT_NAME"                     \
                 ParameterKey=DomainBaseURL,ParameterValue="$AWS_DOMAIN_NAME"               \
+                ParameterKey=DomainHostedZoneId,ParameterValue="$HOSTED_ZONE_ID"           \
                 ParameterKey=BuildStep,ParameterValue="$BUILD_COUNTER"                      \
                 ParameterKey=EmailAddrSNS,ParameterValue="$USER_EMAIL"                      \
                 --tags Key=Name,Value="$PROJECT_NAME" --template-url "$TEMPLATE_URL"        \
@@ -645,7 +634,7 @@ fi
 
 #-----------------------------
 # Create client ovpn configs from template
-find ./openvpn/client/ovpn/template*.ovpn -type f -print0 |
+` ./openvpn/client/ovpn/template*.ovpn -type f -print0 |
   while IFS= read -r -d '' TEMPLATE
   do
     # Copy/Rename template via parameter expansion
