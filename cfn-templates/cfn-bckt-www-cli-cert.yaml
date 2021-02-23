@@ -1,0 +1,94 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  Add Description Here.
+
+# ------------------------------------------
+
+
+# ==========================================
+Metadata: {}
+# Metadata:
+
+
+# ==========================================
+# Parameters {}
+Parameters:
+
+  # ------------------------------------------
+  # --- The Project Name
+  ProjectName:
+    Description: "The Name given to this Project."
+    ConstraintDescription: "Specify Project Name"
+    Type: String
+    Default: "cfn-bckt-www-cli"
+    MinLength: 3
+    MaxLength: 63
+    AllowedPattern:
+      (?!^(\d{1,3}\.){3}\d{1,3}$)(^[a-z0-9]([a-z0-9-]*(\.[a-z0-9])?)*$(?<!\-))
+
+  # ------------------------------------------
+  # --- The Hosted Zone Domain Name
+  DomainBaseURL:
+    Description: "Domain Base URL Hosted Zone Apex"
+    Type: String
+    Default: "cloudemprise.org"
+    AllowedPattern:
+      ^(\*\.)?(((?!-)[A-Za-z0-9-]{0,62}[A-Za-z0-9])\.)+((?!-)[A-Za-z0-9-]{1,62}[A-Za-z0-9])$
+
+  # ------------------------------------------
+  # --- The Domain Hosted Zone ID
+  DomainHostedZoneId:
+    Description: "An Amazon Route 53 hosted zone ID"
+    Type: AWS::Route53::HostedZone::Id
+
+
+# ==========================================
+Conditions: {}
+# Conditions:
+
+
+# ==========================================
+Resources:
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  #         CERTIFICATE DEFINITION
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+  # ------------------------------------------
+  # --- Certificate Definition
+  DomainBaseURLCertificate:
+    Type: "AWS::CertificateManager::Certificate"
+    # .............................
+    Properties:
+      # .............................
+      Tags:
+        -
+          Key: "Name"
+          Value: !Sub "${ProjectName}"
+      # .............................
+      DomainName: !Sub "${DomainBaseURL}"
+      # .............................
+      ValidationMethod: "DNS"
+      # .............................
+      SubjectAlternativeNames:
+        -
+          !Sub "*.${DomainBaseURL}"
+      # .............................
+      DomainValidationOptions:
+        - DomainName: !Sub "${DomainBaseURL}"
+          HostedZoneId: !Ref DomainHostedZoneId
+      # .............................
+      CertificateTransparencyLoggingPreference: "ENABLED"
+
+
+# ==========================================
+# Outputs: {}
+Outputs:
+
+  # ------------------------------------------
+  # --- Website URL
+  DomainBaseURLCertificateARN:
+    Description: "The ARN of the DomainBaseURL."
+    Value: !Ref DomainBaseURLCertificate

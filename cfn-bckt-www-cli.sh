@@ -261,6 +261,64 @@ find -L ./www -type f -name "*.html" ! -path "*/scratch/*" -print0 |
 
 
 
+
+#-----------------------------
+#-----------------------------
+# Stage1 Stack Creation Code Block
+BUILD_COUNTER="stage0"
+echo "Cloudformation Stack Creation Initiated .......: $BUILD_COUNTER"
+
+
+
+TEMPLATE_URL="https://${PROJECT_NAME}.s3.${AWS_REGION}.amazonaws.com/cfn-templates/cfn-bckt-www-cli-cert.yaml"
+AWS_REGION_CERT="us-east-1"
+TIME_START_STACK=$(date +%s)
+#-----------------------------
+STACK_ID=$(aws cloudformation create-stack --stack-name "$STACK_NAME" --parameters          \
+                ParameterKey=ProjectName,ParameterValue="$PROJECT_NAME"                     \
+                ParameterKey=DomainBaseURL,ParameterValue="$AWS_DOMAIN_NAME"               \
+                ParameterKey=DomainHostedZoneId,ParameterValue="$HOSTED_ZONE_ID"           \
+                --tags Key=Name,Value="$PROJECT_NAME" --template-url "$TEMPLATE_URL"        \
+                --profile "$AWS_PROFILE" --region "$AWS_REGION_CERT"                             \
+                --on-failure DO_NOTHING --capabilities CAPABILITY_NAMED_IAM --output text)
+#-----------------------------
+if [[ $? -eq 0 ]]; then
+  # Wait for stack creation to complete
+  echo "Cloudformation Stack Creation Process Wait.....: $STACK_ID"
+  CREATE_STACK_STATUS=$(aws cloudformation describe-stacks --stack-name "$STACK_ID" --query 'Stacks[0].StackStatus' --output text --profile "$AWS_PROFILE" --region "$AWS_REGION_CERT")
+  while [[ $CREATE_STACK_STATUS == "REVIEW_IN_PROGRESS" ]] || [[ $CREATE_STACK_STATUS == "CREATE_IN_PROGRESS" ]]
+  do
+      # Wait 1 seconds and then check stack status again
+      sleep 1
+      printf '.'
+      CREATE_STACK_STATUS=$(aws cloudformation describe-stacks --stack-name "$STACK_ID" --query 'Stacks[0].StackStatus' --output text --profile "$AWS_PROFILE" --region "$AWS_REGION_CERT")
+  done
+  printf '\n'
+fi
+#-----------------------------
+# Validate stack creation has not failed
+if (aws cloudformation wait stack-create-complete --stack-name "$STACK_ID" --profile "$AWS_PROFILE" --region "$AWS_REGION_CERT")
+then 
+  echo "Cloudformation Stack Create Process Complete ..: $BUILD_COUNTER"
+else 
+  echo "Error: Stack Create Failed!"
+  printf 'Stack ID: \n%s\n' "$STACK_ID"
+  exit 1
+fi
+#-----------------------------
+# Calculate Stack Creation Execution Time
+TIME_END_STACK=$(date +%s)
+TIME_DIFF_STACK=$((TIME_END_STACK - TIME_START_STACK))
+echo "$BUILD_COUNTER Finished Execution Time ................: \
+$(( TIME_DIFF_STACK / 3600 ))h $(( (TIME_DIFF_STACK / 60) % 60 ))m $(( TIME_DIFF_STACK % 60 ))s"
+#.............................
+#.............................
+
+
+
+
+
+
 #-----------------------------
 #-----------------------------
 # Stage1 Stack Creation Code Block
