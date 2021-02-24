@@ -115,8 +115,8 @@ Resources:
           # ---
           TargetOriginId: !Sub "${ProjectName}-${DomainBaseURL}-origin"
           # --- Allow http for cheaper health checks.
-          ViewerProtocolPolicy: "allow-all"
-          #ViewerProtocolPolicy: "redirect-to-https"
+          #ViewerProtocolPolicy: "allow-all"
+          ViewerProtocolPolicy: "redirect-to-https"
           # ---
           AllowedMethods: 
             - "HEAD"
