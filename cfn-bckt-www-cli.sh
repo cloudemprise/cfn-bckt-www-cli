@@ -329,8 +329,8 @@ TIME_START_STACK=$(date +%s)
 STACK_ID=$(aws cloudformation create-stack --stack-name "$STACK_NAME" --parameters          \
                 ParameterKey=ProjectName,ParameterValue="$PROJECT_NAME"                     \
                 ParameterKey=DomainBaseURL,ParameterValue="$AWS_DOMAIN_NAME"               \
+                ParameterKey=DomainHostedZoneId,ParameterValue="$HOSTED_ZONE_ID"           \
                 ParameterKey=DomainCertARN,ParameterValue="$AWS_DOMAIN_CERT_ARN"           \
-                ParameterKey=BuildStep,ParameterValue="$BUILD_COUNTER"                      \
                 ParameterKey=EmailAddrSNS,ParameterValue="$USER_EMAIL"                      \
                 --tags Key=Name,Value="$PROJECT_NAME" --template-url "$TEMPLATE_URL"        \
                 --profile "$AWS_PROFILE" --region "$AWS_REGION"                             \

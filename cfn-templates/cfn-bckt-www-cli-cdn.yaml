@@ -16,10 +16,10 @@ Metadata: {}
 Parameters:
 
   # ------------------------------------------
-  # --- The Project Name
+  # --- Name give to this project
   ProjectName:
     Description: "The Name given to this Project."
-    ConstraintDescription: "Specify Project Name"
+    ConstraintDescription: "Name must satisfy S3 constraints."
     Type: String
     Default: "cfn-bckt-www-cli"
     MinLength: 3
@@ -28,7 +28,7 @@ Parameters:
       (?!^(\d{1,3}\.){3}\d{1,3}$)(^[a-z0-9]([a-z0-9-]*(\.[a-z0-9])?)*$(?<!\-))
 
   # ------------------------------------------
-  # --- The Hosted Zone Domain Name
+  # --- The Base URL Domain Name
   DomainBaseURL:
     Description: "Domain Base URL Hosted Zone Apex"
     Type: String
@@ -99,8 +99,8 @@ Resources:
         DefaultRootObject: "index.html"
         # .............................
         # --- Use Only U.S., Canada and Europe
-        # PriceClass: "PriceClass_100"
-        PriceClass: "PriceClass_All"
+        PriceClass: "PriceClass_100"
+        # PriceClass: "PriceClass_All"
         # ... Alternate Domain Names (CNAMEs)
         Aliases: 
           - !Sub ${DomainBaseURL}
@@ -114,9 +114,9 @@ Resources:
         DefaultCacheBehavior:
           # ---
           TargetOriginId: !Sub "${ProjectName}-${DomainBaseURL}-origin"
-          # ---
-          #ViewerProtocolPolicy: "allow-all"
-          ViewerProtocolPolicy: "redirect-to-https"
+          # --- Allow http for cheaper health checks.
+          ViewerProtocolPolicy: "allow-all"
+          #ViewerProtocolPolicy: "redirect-to-https"
           # ---
           AllowedMethods: 
             - "HEAD"
@@ -149,8 +149,29 @@ Resources:
           AcmCertificateArn: !Ref DomainBaseURLCertificateARN
           MinimumProtocolVersion: "TLSv1.2_2019"
           SslSupportMethod: "sni-only"
-          #CloudFrontDefaultCertificate: false
-
+        # .............................
+        Restrictions: 
+          GeoRestriction: 
+            RestrictionType: "blacklist"
+            Locations: 
+            - "VN"
+            - "CL"
+            - "AR"
+            - "CO"
+            - "BR"
+            - "IN"
+            - "MX"
+            - "RU"
+            - "BE"
+            - "PL"
+            - "FR"
+            - "CN"
+            - "UA"
+            - "TW"
+            - "TR"
+            - "ES"
+            - "KR"
+            - "JP"
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   #         S3 BUCKET POLICY DEFINITION
@@ -182,7 +203,7 @@ Resources:
 Outputs:
 
   # ------------------------------------------
-  # --- Website URL
+  # --- CDN DNS URL
   CloudfrontURL:
     Description: "The URL of Cloudfront Distribution."
     Value: !GetAtt CloudFrontDistribution.DomainName
