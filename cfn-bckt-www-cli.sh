@@ -240,10 +240,6 @@ find -L ./cfn-templates -type f -name "*.yaml" ! -path "*/scratch/*" -print0 |
 #.............................
 
 
-      # Copy/Rename template via parameter expansion
-      #cp "$TEMPLATE" "${TEMPLATE//template/$PROJECT_NAME}"
-
-
 #----------------------------------------------
 # Upload html files to S3
 find -L ./www -type f -name "*.html" ! -path "*/scratch/*" -print0 |
@@ -260,15 +256,11 @@ find -L ./www -type f -name "*.html" ! -path "*/scratch/*" -print0 |
 #.............................
 
 
-
-
 #-----------------------------
 #-----------------------------
 # Stage1 Stack Creation Code Block
 BUILD_COUNTER="stage0"
 echo "Cloudformation Stack Creation Initiated .......: $BUILD_COUNTER"
-
-
 
 TEMPLATE_URL="https://${PROJECT_NAME}.s3.${AWS_REGION}.amazonaws.com/cfn-templates/cfn-bckt-www-cli-cert.yaml"
 AWS_REGION_CERT="us-east-1"
@@ -315,8 +307,14 @@ $(( TIME_DIFF_STACK / 3600 ))h $(( (TIME_DIFF_STACK / 60) % 60 ))m $(( TIME_DIFF
 #.............................
 
 
-
-
+#-----------------------------
+# Get ARN Domain Certificate for TLS CDN
+QUERY_STR="CertificateSummaryList[?DomainName == '${AWS_DOMAIN_NAME}'].CertificateArn"
+AWS_DOMAIN_CERT_ARN=$(aws acm list-certificates --region us-east-1 --certificate-statuses ISSUED \
+    --query "$QUERY_STR" --output text)
+[[ -z "$AWS_DOMAIN_CERT_ARN" ]] && { echo "Invalid Domain Certificate ARN!"; exit 1; } \
+    || { echo "The Domain Certificate ARN ....................: $AWS_DOMAIN_CERT_ARN"; }
+#.............................
 
 
 #-----------------------------
@@ -325,16 +323,13 @@ $(( TIME_DIFF_STACK / 3600 ))h $(( (TIME_DIFF_STACK / 60) % 60 ))m $(( TIME_DIFF
 BUILD_COUNTER="stage1"
 echo "Cloudformation Stack Creation Initiated .......: $BUILD_COUNTER"
 
-
-
-#STACK_POLICY_URL="https://${PROJECT_NAME}.s3.eu-central-1.amazonaws.com/policies/cfn-stacks/${PROJECT_NAME}-${BUILD_COUNTER}-cfn-stack-policy.json"
 TEMPLATE_URL="https://${PROJECT_NAME}.s3.${AWS_REGION}.amazonaws.com/cfn-templates/cfn-bckt-www-cli.yaml"
 TIME_START_STACK=$(date +%s)
 #-----------------------------
 STACK_ID=$(aws cloudformation create-stack --stack-name "$STACK_NAME" --parameters          \
                 ParameterKey=ProjectName,ParameterValue="$PROJECT_NAME"                     \
                 ParameterKey=DomainBaseURL,ParameterValue="$AWS_DOMAIN_NAME"               \
-                ParameterKey=DomainHostedZoneId,ParameterValue="$HOSTED_ZONE_ID"           \
+                ParameterKey=DomainCertARN,ParameterValue="$AWS_DOMAIN_CERT_ARN"           \
                 ParameterKey=BuildStep,ParameterValue="$BUILD_COUNTER"                      \
                 ParameterKey=EmailAddrSNS,ParameterValue="$USER_EMAIL"                      \
                 --tags Key=Name,Value="$PROJECT_NAME" --template-url "$TEMPLATE_URL"        \

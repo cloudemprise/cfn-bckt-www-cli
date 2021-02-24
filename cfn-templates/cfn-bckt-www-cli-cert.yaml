@@ -88,7 +88,7 @@ Resources:
 Outputs:
 
   # ------------------------------------------
-  # --- Website URL
+  # --- ARN DomainBaseURL Certificate
   DomainBaseURLCertificateARN:
-    Description: "The ARN of the DomainBaseURL."
+    Description: "The ARN of the DomainBaseURL Certificate."
     Value: !Ref DomainBaseURLCertificate

@@ -48,6 +48,11 @@ Parameters:
     Description: "The IPv4 Logs Bucket DNS."
     Type: String
 
+  # ------------------------------------------
+  # --- ARN Domain TLS Public Certificate
+  DomainBaseURLCertificateARN:
+    Description: "ARN Domain TLS Public Certificate."
+    Type: String
 
 # ==========================================
 Conditions: {}
@@ -97,9 +102,9 @@ Resources:
         # PriceClass: "PriceClass_100"
         PriceClass: "PriceClass_All"
         # ... Alternate Domain Names (CNAMEs)
-        # Aliases: 
-        #  - !Sub ${DomainBaseURL}
-        #  - !Sub "www.${DomainBaseURL}"
+        Aliases: 
+          - !Sub ${DomainBaseURL}
+          - !Sub "www.${DomainBaseURL}"
         # .............................
         Logging:
           Bucket: !Ref BucketLogsDNS
@@ -110,8 +115,8 @@ Resources:
           # ---
           TargetOriginId: !Sub "${ProjectName}-${DomainBaseURL}-origin"
           # ---
-          ViewerProtocolPolicy: "allow-all"
-          #ViewerProtocolPolicy: "redirect-to-https"
+          #ViewerProtocolPolicy: "allow-all"
+          ViewerProtocolPolicy: "redirect-to-https"
           # ---
           AllowedMethods: 
             - "HEAD"
@@ -139,6 +144,12 @@ Resources:
             # ---
             S3OriginConfig:
               OriginAccessIdentity: !Sub "origin-access-identity/cloudfront/${CloudFrontOriginAccessIdentity}"
+        # .............................
+        ViewerCertificate:
+          AcmCertificateArn: !Ref DomainBaseURLCertificateARN
+          MinimumProtocolVersion: "TLSv1.2_2019"
+          SslSupportMethod: "sni-only"
+          #CloudFrontDefaultCertificate: false
 
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
