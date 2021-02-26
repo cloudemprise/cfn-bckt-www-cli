@@ -34,7 +34,7 @@ Parameters:
     Description: "The Name given to this Project."
     ConstraintDescription: "Name must satisfy S3 constraints."
     Type: String
-    Default: "cfn-bckt-www-cli"
+    Default: "cfn-www-cicd-cli"
     MinLength: 3
     MaxLength: 63
     AllowedPattern:
@@ -109,7 +109,7 @@ Resources:
     # .............................
     Properties:
       TemplateURL:
-        !Sub "https://${ProjectName}.s3.${AWS::Region}.amazonaws.com/cfn-templates/cfn-bckt-www-cli-s3.yaml"
+        !Sub "https://${ProjectName}.s3.${AWS::Region}.amazonaws.com/cfn-templates/cfn-www-cicd-cli-s3.yaml"
       Parameters:
         ProjectName:
           !Ref ProjectName
@@ -124,7 +124,7 @@ Resources:
     # .............................
     Properties:
       TemplateURL:
-        !Sub "https://${ProjectName}.s3.${AWS::Region}.amazonaws.com/cfn-templates/cfn-bckt-www-cli-cdn.yaml"
+        !Sub "https://${ProjectName}.s3.${AWS::Region}.amazonaws.com/cfn-templates/cfn-www-cicd-cli-cdn.yaml"
       Parameters:
         ProjectName:
           !Ref ProjectName
@@ -145,7 +145,7 @@ Resources:
     # .............................
     Properties:
       TemplateURL:
-        !Sub "https://${ProjectName}.s3.${AWS::Region}.amazonaws.com/cfn-templates/cfn-bckt-www-cli-r53.yaml"
+        !Sub "https://${ProjectName}.s3.${AWS::Region}.amazonaws.com/cfn-templates/cfn-www-cicd-cli-r53.yaml"
       Parameters:
         ProjectName:
           !Ref ProjectName

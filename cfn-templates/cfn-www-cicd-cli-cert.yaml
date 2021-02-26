@@ -1,9 +1,7 @@
 ---
 AWSTemplateFormatVersion: '2010-09-09'
 Description: >
-  Creates an aliased A Record Set for the Network Loadbalancer associated with
-  Openvpn service.
-  Prerequisite: A registered Domain Name and a previously defined Hosted Zone.
+  Add Description Here.
 
 # ------------------------------------------
 
@@ -23,7 +21,7 @@ Parameters:
     Description: "The Name given to this Project."
     ConstraintDescription: "Name must satisfy S3 constraints."
     Type: String
-    Default: "cfn-bckt-www-cli"
+    Default: "cfn-www-cicd-cli"
     MinLength: 3
     MaxLength: 63
     AllowedPattern:
@@ -44,13 +42,6 @@ Parameters:
     Description: "An Amazon Route 53 hosted zone ID"
     Type: AWS::Route53::HostedZone::Id
 
-  # ------------------------------------------
-  # --- CDN DNS URL
-  CloudfrontURL:
-    Description: "The URL of Cloudfront Distribution."
-    Type: String
-    AllowedPattern:
-      ^(([a-zA-Z]{1})|([a-zA-Z]{1}[a-zA-Z]{1})|([a-zA-Z]{1}[0-9]{1})|([0-9]{1}[a-zA-Z]{1})|([a-zA-Z0-9][a-zA-Z0-9-_]{1,61}[a-zA-Z0-9]))\.([a-zA-Z]{2,6}|[a-zA-Z0-9-]{2,30}\.[a-zA-Z]{2,3})$
 
 # ==========================================
 Conditions: {}
@@ -61,47 +52,43 @@ Conditions: {}
 Resources:
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #         ROUTE 53 RECORD SET
+  #         CERTIFICATE DEFINITION
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
   # ------------------------------------------
-  # --- Record Set Definition
-  R53RecordSetCDN1:
-    Type: "AWS::Route53::RecordSet"
+  # --- Certificate Definition
+  DomainBaseURLCertificate:
+    Type: "AWS::CertificateManager::Certificate"
     # .............................
     Properties:
       # .............................
-      Name: !Sub "${DomainBaseURL}"
-      Comment: !Sub "${ProjectName} CDN S3 Website"
-      Type: "A"
-      HostedZoneId: !Ref DomainHostedZoneId
-      AliasTarget:
-        DNSName: !Ref CloudfrontURL
-        # --- Static Variable
-        HostedZoneId: "Z2FDTNDATAQYW2"
-        # --- Can not evaluate CloudFront distributions
-        EvaluateTargetHealth: false
-
-  # ------------------------------------------
-  # --- Record Set Definition
-  R53RecordSetCDN2:
-    Type: "AWS::Route53::RecordSet"
-    # .............................
-    Properties:
+      Tags:
+        -
+          Key: "Name"
+          Value: !Sub "${ProjectName}"
       # .............................
-      Name: !Sub "www.${DomainBaseURL}"
-      Comment: !Sub "${ProjectName} CDN S3 Website"
-      Type: "A"
-      HostedZoneId: !Ref DomainHostedZoneId
-      AliasTarget:
-        DNSName: !Ref CloudfrontURL
-        # --- Static Variable
-        HostedZoneId: "Z2FDTNDATAQYW2"
-        # --- Can not evaluate CloudFront distributions
-        EvaluateTargetHealth: false
+      DomainName: !Sub "${DomainBaseURL}"
+      # .............................
+      ValidationMethod: "DNS"
+      # .............................
+      SubjectAlternativeNames:
+        -
+          !Sub "*.${DomainBaseURL}"
+      # .............................
+      DomainValidationOptions:
+        - DomainName: !Sub "${DomainBaseURL}"
+          HostedZoneId: !Ref DomainHostedZoneId
+      # .............................
+      CertificateTransparencyLoggingPreference: "ENABLED"
 
 
 # ==========================================
-Outputs: {}
-# Outputs:
+# Outputs: {}
+Outputs:
+
+  # ------------------------------------------
+  # --- ARN DomainBaseURL Certificate
+  DomainBaseURLCertificateARN:
+    Description: "The ARN of the DomainBaseURL Certificate."
+    Value: !Ref DomainBaseURLCertificate

@@ -21,7 +21,7 @@ Parameters:
     Description: "The Name given to this Project."
     ConstraintDescription: "Name must satisfy S3 constraints."
     Type: String
-    Default: "cfn-bckt-www-cli"
+    Default: "cfn-www-cicd-cli"
     MinLength: 3
     MaxLength: 63
     AllowedPattern:
@@ -64,7 +64,8 @@ Resources:
           Value: !Sub "${ProjectName}"
       # .............................
       BucketName: !Sub "${DomainBaseURL}"
-      AccessControl: PublicRead
+      # --- No change required for CDN access
+      #AccessControl: PublicRead
       # .............................
       WebsiteConfiguration: 
         IndexDocument: "index.html"

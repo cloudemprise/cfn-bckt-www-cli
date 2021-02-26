@@ -1,6 +1,6 @@
 #!/bin/bash -e
 # debug options include -v -x
-# cfn-bckt-www-cli.sh 
+# cfn-www-cicd-cli.sh 
 # S3 Static Website with Cloudfront.
 # Prerequists: s3 buckets, domain name with hosted zone.
 
@@ -68,7 +68,7 @@ done
 
 #-----------------------------
 # Request Project Name
-PROJECT_NAME="cfn-bckt-www-cli"
+PROJECT_NAME="cfn-www-cicd-cli"
 while true
 do
   # -e : stdin from terminal
@@ -262,7 +262,7 @@ find -L ./www -type f -name "*.html" ! -path "*/scratch/*" -print0 |
 BUILD_COUNTER="stage0"
 echo "Cloudformation Stack Creation Initiated .......: $BUILD_COUNTER"
 
-TEMPLATE_URL="https://${PROJECT_NAME}.s3.${AWS_REGION}.amazonaws.com/cfn-templates/cfn-bckt-www-cli-cert.yaml"
+TEMPLATE_URL="https://${PROJECT_NAME}.s3.${AWS_REGION}.amazonaws.com/cfn-templates/cfn-www-cicd-cli-cert.yaml"
 AWS_REGION_CERT="us-east-1"
 TIME_START_STACK=$(date +%s)
 #-----------------------------
@@ -323,7 +323,7 @@ AWS_DOMAIN_CERT_ARN=$(aws acm list-certificates --region us-east-1 --certificate
 BUILD_COUNTER="stage1"
 echo "Cloudformation Stack Creation Initiated .......: $BUILD_COUNTER"
 
-TEMPLATE_URL="https://${PROJECT_NAME}.s3.${AWS_REGION}.amazonaws.com/cfn-templates/cfn-bckt-www-cli.yaml"
+TEMPLATE_URL="https://${PROJECT_NAME}.s3.${AWS_REGION}.amazonaws.com/cfn-templates/cfn-www-cicd-cli.yaml"
 TIME_START_STACK=$(date +%s)
 #-----------------------------
 STACK_ID=$(aws cloudformation create-stack --stack-name "$STACK_NAME" --parameters          \
@@ -630,8 +630,8 @@ find ./cfn-templates -type f -name "*.yaml" ! -path "*/scratch/*" -print0 |
 
 #-----------------------------
 # Upload easy-rsa pki keygen configs to S3
-S3_LOCATION="$PROJECT_BUCKET/easy-rsa/cfn-bckt-www-cli-vars"
-if [[ $(tar -zcf - easy-rsa/cfn-bckt-www-cli-vars/vars* | aws s3 cp - ${S3_LOCATION}/cfn-bckt-www-cli-easyrsa-vars.tar.gz --profile "$AWS_PROFILE" --region "$AWS_REGION") -ne 0 ]]
+S3_LOCATION="$PROJECT_BUCKET/easy-rsa/cfn-www-cicd-cli-vars"
+if [[ $(tar -zcf - easy-rsa/cfn-www-cicd-cli-vars/vars* | aws s3 cp - ${S3_LOCATION}/cfn-www-cicd-cli-easyrsa-vars.tar.gz --profile "$AWS_PROFILE" --region "$AWS_REGION") -ne 0 ]]
 then
   echo "easy-rsa Configs Failed to Uploaded to S3 .....: $S3_LOCATION"
   exit 1
@@ -643,8 +643,8 @@ fi
 #-----------------------------
 #Compress & Upload public iptables scripts to S3
 S3_LOCATION="$PROJECT_BUCKET/iptables"
-if [[ $(tar -zcf - iptables/cfn-bckt-www-cli-ec2-pub-iptables.sh  | aws s3 cp - ${S3_LOCATION}/cfn-bckt-www-cli-ec2-pub-iptables.sh.tar.gz --profile "$AWS_PROFILE" --region "$AWS_REGION") -ne 0 ]] || \
-   [[ $(tar -zcf - iptables/cfn-bckt-www-cli-ec2-priv-iptables.sh | aws s3 cp - ${S3_LOCATION}/cfn-bckt-www-cli-ec2-priv-iptables.sh.tar.gz --profile "$AWS_PROFILE" --region "$AWS_REGION") -ne 0 ]]
+if [[ $(tar -zcf - iptables/cfn-www-cicd-cli-ec2-pub-iptables.sh  | aws s3 cp - ${S3_LOCATION}/cfn-www-cicd-cli-ec2-pub-iptables.sh.tar.gz --profile "$AWS_PROFILE" --region "$AWS_REGION") -ne 0 ]] || \
+   [[ $(tar -zcf - iptables/cfn-www-cicd-cli-ec2-priv-iptables.sh | aws s3 cp - ${S3_LOCATION}/cfn-www-cicd-cli-ec2-priv-iptables.sh.tar.gz --profile "$AWS_PROFILE" --region "$AWS_REGION") -ne 0 ]]
 then
   echo "iptables Configs Failed to Uploaded to S3 .....: ${S3_LOCATION}"
   exit 1
@@ -702,8 +702,8 @@ fi
 #Compress & Upload openvpn server configs to S3
 # Remove hierarchy from archives for more flexible extraction options.
 S3_LOCATION="$PROJECT_BUCKET/openvpn"
-if [[ $(tar -zcf - -C ./openvpn/server/conf/ . | aws s3 cp - ${S3_LOCATION}/server/conf/cfn-bckt-www-cli-server-1194.conf.tar.gz --profile "$AWS_PROFILE" --region "$AWS_REGION") -ne 0 ]] || \
-   [[ $(gzip -c ./openvpn/client/ovpn/*.tar | aws s3 cp - ${S3_LOCATION}/client/ovpn/cfn-bckt-www-cli-client-1194.ovpn.tar.gz --profile "$AWS_PROFILE" --region "$AWS_REGION") -ne 0 ]]
+if [[ $(tar -zcf - -C ./openvpn/server/conf/ . | aws s3 cp - ${S3_LOCATION}/server/conf/cfn-www-cicd-cli-server-1194.conf.tar.gz --profile "$AWS_PROFILE" --region "$AWS_REGION") -ne 0 ]] || \
+   [[ $(gzip -c ./openvpn/client/ovpn/*.tar | aws s3 cp - ${S3_LOCATION}/client/ovpn/cfn-www-cicd-cli-client-1194.ovpn.tar.gz --profile "$AWS_PROFILE" --region "$AWS_REGION") -ne 0 ]]
 then
   echo "Openvpn Configs Failed to Uploaded to S3 ......: ${S3_LOCATION}"
   exit 1
@@ -717,7 +717,7 @@ fi
 #-----------------------------
 #Compress & Upload sshd hardening script to S3
 S3_LOCATION="$PROJECT_BUCKET/ssh"
-if [[ $(tar -zcf - ssh/cfn-bckt-www-cli-ec2-harden-ssh.sh | aws s3 cp - ${S3_LOCATION}/cfn-bckt-www-cli-ec2-harden-ssh.sh.tar.gz --profile "$AWS_PROFILE" --region "$AWS_REGION") -ne 0 ]]
+if [[ $(tar -zcf - ssh/cfn-www-cicd-cli-ec2-harden-ssh.sh | aws s3 cp - ${S3_LOCATION}/cfn-www-cicd-cli-ec2-harden-ssh.sh.tar.gz --profile "$AWS_PROFILE" --region "$AWS_REGION") -ne 0 ]]
 then
   echo "Harden SSH Configs Failed to Uploaded to S3 ...: ${S3_LOCATION}"
   exit 1
@@ -736,7 +736,7 @@ echo "Cloudformation Stack Creation Initiated .......: $BUILD_COUNTER"
 
 
 STACK_POLICY_URL="https://${PROJECT_NAME}.s3.eu-central-1.amazonaws.com/policies/cfn-stacks/${PROJECT_NAME}-${BUILD_COUNTER}-cfn-stack-policy.json"
-TEMPLATE_URL="https://${PROJECT_NAME}.s3.eu-central-1.amazonaws.com/cfn-templates/cfn-bckt-www-cli.yaml"
+TEMPLATE_URL="https://${PROJECT_NAME}.s3.eu-central-1.amazonaws.com/cfn-templates/cfn-www-cicd-cli.yaml"
 TIME_START_STACK=$(date +%s)
 #-----------------------------
 STACK_ID=$(aws cloudformation create-stack --stack-name "$STACK_NAME" --parameters      \

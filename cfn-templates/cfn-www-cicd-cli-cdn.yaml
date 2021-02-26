@@ -21,7 +21,7 @@ Parameters:
     Description: "The Name given to this Project."
     ConstraintDescription: "Name must satisfy S3 constraints."
     Type: String
-    Default: "cfn-bckt-www-cli"
+    Default: "cfn-www-cicd-cli"
     MinLength: 3
     MaxLength: 63
     AllowedPattern:
@@ -188,7 +188,7 @@ Resources:
       Bucket: !Sub "${DomainBaseURL}"
       PolicyDocument:
         Id: "PolicyForCloudFrontPrivateContent"
-        Version: "2008-10-17"
+        Version: "2012-10-17"
         Statement:
           - Effect: "Allow"
             Action:
