@@ -43,7 +43,7 @@ Parameters:
   # ------------------------------------------
   # --- The Base URL Domain Name
   DomainBaseURL:
-    Description: "Domain Base URL Hosted Zone Apex"
+    Description: "Domain Base URL Hosted Zone Apex."
     Type: String
     Default: "cloudemprise.org"
     AllowedPattern:
@@ -52,7 +52,7 @@ Parameters:
   # ------------------------------------------
   # --- The Domain Hosted Zone ID
   DomainHostedZoneId:
-    Description: "An Amazon Route 53 hosted zone ID"
+    Description: "An Amazon Route 53 hosted zone ID."
     Type: AWS::Route53::HostedZone::Id
 
   # ------------------------------------------
@@ -60,6 +60,13 @@ Parameters:
   DomainCertARN:
     Description: "The ARN of the DomainBaseURL Certificate."
     Type: String
+
+  # ------------------------------------------
+  # --- CodeCommit Website Artifacts Repository Name
+  CodeCommitRepoName:
+    Description: "CodeCommit Repository for Website Artifacts."
+    Type: String
+    Default: "www-cloudemprise-html"
 
   # ------------------------------------------
   # --- Script Build Step Counter
@@ -109,7 +116,7 @@ Resources:
     # .............................
     Properties:
       TemplateURL:
-        !Sub "https://${ProjectName}.s3.${AWS::Region}.amazonaws.com/cfn-templates/cfn-www-cicd-cli-s3.yaml"
+        !Sub "https://proj-${ProjectName}.s3.${AWS::Region}.amazonaws.com/cfn-templates/cfn-www-cicd-cli-s3.yaml"
       Parameters:
         ProjectName:
           !Ref ProjectName
@@ -124,7 +131,7 @@ Resources:
     # .............................
     Properties:
       TemplateURL:
-        !Sub "https://${ProjectName}.s3.${AWS::Region}.amazonaws.com/cfn-templates/cfn-www-cicd-cli-cdn.yaml"
+        !Sub "https://proj-${ProjectName}.s3.${AWS::Region}.amazonaws.com/cfn-templates/cfn-www-cicd-cli-cdn.yaml"
       Parameters:
         ProjectName:
           !Ref ProjectName
@@ -145,7 +152,7 @@ Resources:
     # .............................
     Properties:
       TemplateURL:
-        !Sub "https://${ProjectName}.s3.${AWS::Region}.amazonaws.com/cfn-templates/cfn-www-cicd-cli-r53.yaml"
+        !Sub "https://proj-${ProjectName}.s3.${AWS::Region}.amazonaws.com/cfn-templates/cfn-www-cicd-cli-r53.yaml"
       Parameters:
         ProjectName:
           !Ref ProjectName
@@ -157,6 +164,22 @@ Resources:
           !GetAtt CloudfrontDefs.Outputs.CloudfrontURL
       TimeoutInMinutes: 5
 
+  # ------------------------------------------
+  # --- CI/CD Pipeline Definition
+  CicdPipelineDefs:
+    Type: "AWS::CloudFormation::Stack"
+    # .............................
+    Properties:
+      TemplateURL:
+        !Sub "https://proj-${ProjectName}.s3.${AWS::Region}.amazonaws.com/cfn-templates/cfn-www-cicd-cli-pipe.yaml"
+      Parameters:
+        ProjectName:
+          !Ref ProjectName
+        DomainBaseURL:
+          !Ref DomainBaseURL
+        CodeCommitRepoName:
+          !Ref CodeCommitRepoName
+      TimeoutInMinutes: 5
 
 # ==========================================
 Outputs: {}
