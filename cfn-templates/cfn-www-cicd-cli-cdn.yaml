@@ -1,7 +1,9 @@
 ---
 AWSTemplateFormatVersion: '2010-09-09'
 Description: >
-  Add Description Here.
+  This template comprises the Actual CDN definition as well as an Origin Access 
+  Identity together with a S3 Bucket Policy to restrict bucket access to only the 
+  Origin Access Identity.
 
 # ------------------------------------------
 

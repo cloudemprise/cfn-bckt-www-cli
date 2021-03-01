@@ -1,8 +1,8 @@
 ---
 AWSTemplateFormatVersion: '2010-09-09'
 Description: >
-  Creates an aliased A Record Set for the Network Loadbalancer associated with
-  Openvpn service.
+  This template comprises two Route53 A Record Sets that associate the Cloudfront 
+  CDN with the actual Custom Domain website URL.
   Prerequisite: A registered Domain Name and a previously defined Hosted Zone.
 
 # ------------------------------------------

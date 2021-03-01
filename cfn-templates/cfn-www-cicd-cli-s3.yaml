@@ -1,7 +1,11 @@
 ---
 AWSTemplateFormatVersion: '2010-09-09'
 Description: >
-  Add Description Here.
+  This template comprises three S3 buckets used for a Static Website Configuration, 
+  namely:
+  1. BucketRootDomain : Contains the actual website documents.
+  2. BucketLogs : Contains website access logs.
+  3. BucketWwwRedirect : www.DomainName redirection
 
 # ------------------------------------------
 

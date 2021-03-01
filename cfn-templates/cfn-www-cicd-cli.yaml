@@ -1,9 +1,12 @@
 ---
 AWSTemplateFormatVersion: '2010-09-09'
 Description: >
-  Configuring a S3 static website using a custom domain registered with Route 53.
-  Speeding up this S3 static website with Amazon CloudFront CDN as well as
-  requiring HTTPS for Communication Between Viewers and CloudFront.
+  Configuring a S3 Static Website using a Custom Domain registered with Route 53 
+  together with its accompanying Hosted Zone. Reduced latentcy is achieved with a 
+  Amazon CloudFront CDN that also comprises encrypted communication via the HTTPS 
+  protocol between Viewers and CloudFront. Included is also a CI/CD pipeline where 
+  source files withing a CodeCommit repository are automatically deployed
+  to the Static Website when updated.
 
   Nested template components include:
 

@@ -1,7 +1,10 @@
 ---
 AWSTemplateFormatVersion: '2010-09-09'
 Description: >
-  Add Description Here.
+  This template comprises a CI/CD pipeline that includes the actual CodePipeline 
+  infrastructure definition together with its associated S3 bucket for source 
+  artifact deployment and the bucket's access policy. Included is also an AWS 
+  CodePipeline Service Policy and Role.
 
 # ------------------------------------------
 
