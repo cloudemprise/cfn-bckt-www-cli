@@ -114,7 +114,7 @@ done
 
 #-----------------------------
 # Request Domain Name
-AWS_DOMAIN_NAME="cloudemprise.org"
+AWS_DOMAIN_NAME="cloudemprise.net"
 while true
 do
   # -e : stdin from terminal
@@ -246,6 +246,7 @@ find ./policies -type f -name "${PROJECT_NAME}*.json" ! -path "*/scratch/*" -pri
   done
 #.............................
 
+
 #----------------------------------------------
 # Upload Cloudformation Templates to S3
 find -L ./cfn-templates -type f -name "*.yaml" ! -path "*/scratch/*" -print0 |
@@ -256,22 +257,6 @@ find -L ./cfn-templates -type f -name "*.yaml" ! -path "*/scratch/*" -print0 |
       exit 1
     elif (aws s3 cp "$FILE" "s3://$PROJECT_BUCKET${FILE#.}" --profile "$AWS_PROFILE" --region "$AWS_REGION" > /dev/null); then
       echo "Uploading Cloudformation Template to S3 .......: s3://$PROJECT_BUCKET${FILE#.}"
-    else continue
-    fi
-  done
-#.............................
-
-
-#----------------------------------------------
-# Upload html files to S3
-find -L ./www -type f -name "*.html" ! -path "*/scratch/*" -print0 |
-  while IFS= read -r -d '' FILE
-  do
-    if [[ ! -s "$FILE" ]]; then
-      echo "Invalid HTML Template Document ................: $FILE"
-      exit 1
-    elif (aws s3 cp "$FILE" "s3://$PROJECT_BUCKET${FILE#.}" --profile "$AWS_PROFILE" --region "$AWS_REGION" > /dev/null); then
-      echo "Uploading HTML Templates to Project Bucket ....: s3://$PROJECT_BUCKET${FILE#.}"
     else continue
     fi
   done
