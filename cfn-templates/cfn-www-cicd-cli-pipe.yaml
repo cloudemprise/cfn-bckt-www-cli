@@ -71,7 +71,7 @@ Resources:
           Key: "Project"
           Value: !Sub "${ProjectName}"
       # .............................
-      BucketName: !Sub "artifacts.${DomainBaseURL}"
+      BucketName: !Sub "pipeline.${ProjectName}.${DomainBaseURL}"
       # .............................
       #BucketEncryption: 
       #  ServerSideEncryptionConfiguration: 
