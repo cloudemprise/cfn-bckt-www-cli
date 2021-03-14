@@ -2,7 +2,7 @@
 
 > A CI/CD pipeline of a secure HTTPS static website fronted by a CDN.
 
-A low-latency, reliable and secure static cloud website appliance; accompanied by an automated software deployment mechanism; orchestrated in Cloudformation via the AWS command line interface.
+A reliable and secure, low-latency static website cloud appliance; accompanied by an automated software deployment mechanism; orchestrated in CloudFormation via the AWS command line interface.
 
 [![Linux](https://img.shields.io/badge/OS-Linux-blue?logo=linux)](https://github.com/cloudemprise/cfn-ovpn-cli)
 ![Bash](https://img.shields.io/badge/Bash->=v4.0-green?logo=GNU%20bash)
@@ -31,7 +31,7 @@ Table of Contents
 
 ## Introduction
 
-**cfn-www-cicd-cli** is a shell script that creates a cloud-based static website application that includes a CI/CD pipeline. This provides for a secure, low-latency personal website solution. The AWS Command Line Interface (AWS CLI) is used to provision and configure various AWS Resources through an assortment of API calls and AWS Cloudformation templates.
+**cfn-www-cicd-cli** is a shell script that creates a cloud-based static website application comprising a CI/CD pipeline. This provides for a secure, low-latency personal website solution. The AWS Command Line Interface (AWS CLI) is used to provision and configure various AWS Resources through an assortment of API calls and AWS CloudFormation templates.
 
 ##### An overview of the program structure:
 
@@ -43,7 +43,7 @@ The cloud infrastructure provisioning process can now commence and takes the for
 
 ## Topic 1
 
-**cfn-www-cicd-cli** is a shell script that creates a cloud-based Static Website application together with a CI/CD pipeline, that comprises an Amazon Route 53 Custom Domain, an Amazon S3 bucket configured for website hosting and an Amazon CloudFront distribution together with a Public X.509 Certificate. AWS CodePipeline in conjuction with the AWS CodeCommit version control service is used to automate the deployment of a software release process. This provides for a secure, highly available, fault toleranct, cost effective, low-latency, website hosting solution in the cloud. The AWS Command Line Interface (AWS CLI) is used to provision and configure various AWS Resources through an assortment of API calls and AWS Cloudformation templates.
+**cfn-www-cicd-cli** is a shell script that creates a cloud-based Static Website application together with a CI/CD pipeline, that comprises an Amazon Route 53 Custom Domain, an Amazon S3 bucket configured for website hosting and an Amazon CloudFront distribution together with a Public X.509 Certificate. AWS CodePipeline in conjunction with the AWS CodeCommit version control service is used to automate the deployment of a software release process. This provides for a secure, highly available, fault tolerant, cost effective, low-latency, website hosting solution in the cloud. The AWS Command Line Interface (AWS CLI) is used to provision and configure various AWS Resources through an assortment of API calls and AWS CloudFormation templates.
 
 
 
