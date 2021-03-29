@@ -1,6 +1,6 @@
 # cfn-www-cicd-cli
 
-> A CI/CD pipeline of a secure HTTPS static website fronted by a CDN.
+> A CI/CD pipeline of a secure HTTPS static website fronted by a CDN in the AWS Cloud.
 
 A reliable and secure, low-latency static website cloud appliance; accompanied by an automated software deployment mechanism; orchestrated in CloudFormation via the AWS command line interface.
 
